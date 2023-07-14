@@ -1,0 +1,45 @@
+import java.lang.reflect.*;
+
+public class Main {
+    public static void main(String[] args) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        //достъп до класа
+        Class personClass = Person.class;
+
+        //достъп до полетата
+        Field[] privateFields = personClass.getDeclaredFields();
+        Field[] publicFields = personClass.getFields();
+
+        for (Field field : privateFields) {
+            System.out.println(field.getName()); //име на полето
+            System.out.println(Modifier.toString(field.getModifiers())); //модификаторите за достъп: private final
+            System.out.println(Modifier.isPublic(field.getModifiers())); //проверка дали полето е public
+            System.out.println(Modifier.isPrivate(field.getModifiers())); //проверка дали полето е private
+            System.out.println(Modifier.isProtected(field.getModifiers())); //проверка дали полето е protected
+            System.out.println(Modifier.isFinal(field.getModifiers())); //проверка дали полето е final
+        }
+
+        //достъп до конструктор
+        Constructor<Person> privateConstructor = personClass.getDeclaredConstructor(String.class);
+        privateConstructor.setAccessible(true);
+        Constructor<Person> publicConstructor = personClass.getConstructor(String.class, int.class);
+
+        //създаване на обекти от класа
+        Person p1 = privateConstructor.newInstance("Pesho");
+        Person p2 = publicConstructor.newInstance("Ivan", 23);
+
+        //използване на създадените обекти
+        System.out.println(p2.getAge());
+        System.out.println(p1.getName());
+
+        //достъп до методи
+        Method methodRun = personClass.getDeclaredMethod("run");
+        methodRun.setAccessible(true);
+        methodRun.invoke(p2);
+        System.out.println(Modifier.toString(methodRun.getModifiers()));
+
+        Method methodGetAge = personClass.getMethod("getAge");
+        methodGetAge.invoke(p1);
+        System.out.println(Modifier.isPublic(methodGetAge.getModifiers())); //проверка дали метода е public
+
+    }
+}
